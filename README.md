@@ -27,6 +27,8 @@ description: Take pictures with the device camera.
 
 # cordova-plugin-camera
 
+**IMPORTANT NOTE**: This plugin has been modified to not require READ_EXTERNAL_STORAGE or WRITE_EXTERNAL_STORAGE permissions. As such, some of the default options are not available, these have been striked through in this readme.
+
 This plugin defines a global `navigator.camera` object, which provides an API for taking pictures and for choosing images from
 the system's image library.
 
@@ -263,7 +265,7 @@ Optional parameters to customize the camera settings.
 | targetHeight | <code>number</code> |  | Height in pixels to scale image. Must be used with `targetWidth`. Aspect ratio remains constant. |
 | mediaType | <code>[MediaType](#module_Camera.MediaType)</code> | <code>PICTURE</code> | Set the type of media to select from.  Only works when `PictureSourceType` is `PHOTOLIBRARY` or `SAVEDPHOTOALBUM`. |
 | correctOrientation | <code>Boolean</code> |  | Rotate the image to correct for the orientation of the device during capture. |
-| saveToPhotoAlbum | <code>Boolean</code> |  | Save the image to the photo album on the device after capture. |
+| ~~saveToPhotoAlbum~~ | <code>Boolean</code> |  | Save the image to the photo album on the device after capture. |
 | popoverOptions | <code>[CameraPopoverOptions](#module_CameraPopoverOptions)</code> |  | iOS-only options that specify popover location in iPad. |
 | cameraDirection | <code>[Direction](#module_Camera.Direction)</code> | <code>BACK</code> | Choose the camera to use (front- or back-facing). |
 
@@ -287,8 +289,8 @@ to implementation specific.
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
 | DATA_URL | <code>number</code> | <code>0</code> | Return base64 encoded string. DATA_URL can be very memory intensive and cause app crashes or out of memory errors. Use FILE_URI or NATIVE_URI if possible |
-| FILE_URI | <code>number</code> | <code>1</code> | Return file uri (content://media/external/images/media/2 for Android) |
-| NATIVE_URI | <code>number</code> | <code>2</code> | Return native uri (eg. asset-library://... for iOS) |
+| ~~FILE_URI~~ | <code>number</code> | <code>1</code> | Return file uri (content://media/external/images/media/2 for Android) |
+| ~~NATIVE_URI~~ | <code>number</code> | <code>2</code> | Return native uri (eg. asset-library://... for iOS) |
 
 <a name="module_Camera.EncodingType"></a>
 
@@ -326,9 +328,9 @@ change, cropping, etc.) due to implementation specific.
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| PHOTOLIBRARY | <code>number</code> | <code>0</code> | Choose image from the device's photo library (same as SAVEDPHOTOALBUM for Android) |
+| ~~PHOTOLIBRARY~~ | <code>number</code> | <code>0</code> | Choose image from the device's photo library (same as SAVEDPHOTOALBUM for Android) |
 | CAMERA | <code>number</code> | <code>1</code> | Take picture from camera |
-| SAVEDPHOTOALBUM | <code>number</code> | <code>2</code> | Choose image only from the device's Camera Roll album (same as PHOTOLIBRARY for Android) |
+| ~~SAVEDPHOTOALBUM~~ | <code>number</code> | <code>2</code> | Choose image only from the device's Camera Roll album (same as PHOTOLIBRARY for Android) |
 
 <a name="module_Camera.PopoverArrowDirection"></a>
 
