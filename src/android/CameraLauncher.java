@@ -122,7 +122,6 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
     protected final static String[] permissions = { Manifest.permission.CAMERA };
 
     public CallbackContext callbackContext;
-    private int numPics;
 
     private MediaScannerConnection conn;    // Used to update gallery app with newly-written files
     private Uri scanMe;                     // Uri of image to be added to content store
@@ -277,9 +276,6 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
 
     public void takePicture(int returnType, int encodingType)
     {
-        // Save the number of images currently on disk for later
-        this.numPics = queryImgDB(whichContentStore()).getCount();
-
         // Let's use the intent and see what happens
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -301,7 +297,7 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
             }
             else
             {
-                LOG.d(LOG_TAG, "Error: You don't have a default camera.  Your device may not be CTS complaint.");
+                LOG.d(LOG_TAG, "Error: You don't have a default camera.  Your device may not be CTS compliant.");
             }
         }
 //        else
@@ -515,9 +511,6 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
 
             this.processPicture(bitmap, this.encodingType);
 
-            if (!this.saveToPhotoAlbum) {
-                checkForDuplicateImage(DATA_URL);
-            }
         }
 
         // If sending filename back
@@ -1182,43 +1175,12 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
         // Clean up initial camera-written image file.
         (new File(FileHelper.stripFileProtocol(oldImage.toString()))).delete();
 
-        checkForDuplicateImage(imageType);
         // Scan for the gallery to update pic refs in gallery
         if (this.saveToPhotoAlbum && newImage != null) {
             this.scanForGallery(newImage);
         }
 
         System.gc();
-    }
-
-    /**
-     * Used to find out if we are in a situation where the Camera Intent adds to images
-     * to the content store. If we are using a FILE_URI and the number of images in the DB
-     * increases by 2 we have a duplicate, when using a DATA_URL the number is 1.
-     *
-     * @param type FILE_URI or DATA_URL
-     */
-    private void checkForDuplicateImage(int type) {
-        int diff = 1;
-        Uri contentStore = whichContentStore();
-        Cursor cursor = queryImgDB(contentStore);
-        int currentNumOfImages = cursor.getCount();
-
-        if (type == FILE_URI && this.saveToPhotoAlbum) {
-            diff = 2;
-        }
-
-        // delete the duplicate file if the difference is 2 for file URI or 1 for Data URL
-        if ((currentNumOfImages - numPics) == diff) {
-            cursor.moveToLast();
-            int id = Integer.valueOf(cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media._ID)));
-            if (diff == 2) {
-                id--;
-            }
-            Uri uri = Uri.parse(contentStore + "/" + id);
-            this.cordova.getActivity().getContentResolver().delete(uri, null, null);
-            cursor.close();
-        }
     }
 
     /**
@@ -1325,7 +1287,6 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
         state.putInt("targetHeight", this.targetHeight);
         state.putInt("encodingType", this.encodingType);
         state.putInt("mediaType", this.mediaType);
-        state.putInt("numPics", this.numPics);
         state.putBoolean("allowEdit", this.allowEdit);
         state.putBoolean("correctOrientation", this.correctOrientation);
         state.putBoolean("saveToPhotoAlbum", this.saveToPhotoAlbum);
@@ -1349,7 +1310,6 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
         this.targetHeight = state.getInt("targetHeight");
         this.encodingType = state.getInt("encodingType");
         this.mediaType = state.getInt("mediaType");
-        this.numPics = state.getInt("numPics");
         this.allowEdit = state.getBoolean("allowEdit");
         this.correctOrientation = state.getBoolean("correctOrientation");
         this.saveToPhotoAlbum = state.getBoolean("saveToPhotoAlbum");
